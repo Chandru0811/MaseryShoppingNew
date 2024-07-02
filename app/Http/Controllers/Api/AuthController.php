@@ -8,9 +8,12 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Laravel\Passport\Passport;
 use Illuminate\Support\Facades\Validator;
+use App\Traits\ApiResponses;
 
 class AuthController extends Controller
 {
+    use ApiResponses;
+
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -48,12 +51,24 @@ class AuthController extends Controller
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             $user = Auth::user();
             $token = $user->createToken('Personal Access Token')->accessToken;
+            $success['token'] = $token;
+            $success['userDetails'] =  $user;
 
             return $this->success('User LoggedIn Successfully!', $success);
         }
 
-        return response()->json(['error' => 'Unauthorized'], 401);
-        return $this->error('Unauthorized', []);
+        return $this->error('Unauthorised.', ['error' => 'Unauthorised']);
+    }
+
+    public function logout(Request $request)
+    {
+        // Get the authenticated user's token
+        $token = $request->user()->token();
+
+        // Revoke the token
+        $token->revoke();
+        
+        return $this->ok('Successfully logged out');
     }
 
 }

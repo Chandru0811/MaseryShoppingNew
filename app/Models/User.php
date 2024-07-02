@@ -20,7 +20,15 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'mobile',
         'password',
+        'dob',
+        'sex',
+        'description',
+        'card_holder_name',
+        'card_brand',
+        'card_last_four',
+        'active'
     ];
 
     /**
@@ -44,5 +52,21 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+    
+    public function orders()
+    {
+        return $this->hasMany(Order::class,'customer_id')->orderBy('created_at', 'desc');
+    }
+    
+
+    public function latest_orders()
+    {
+        return $this->orders()->orderBy('created_at', 'desc')->limit(5);
+    }
+
+    public function carts()
+    {
+        return $this->hasMany(Cart::class);
     }
 }
