@@ -17,7 +17,7 @@ class CategoryController extends Controller
     public function index()
     {
         $category = Category::all();
-        return $this->success('Categories Retrived Succesfully!',$category);
+        return $this->success('Categories Retrived Succesfully!', $category);
     }
 
     /**
@@ -44,11 +44,11 @@ class CategoryController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return $this->error('Validation Error.', ['errors'=>$validator->errors()]);
+            return $this->error('Validation Error.', ['errors' => $validator->errors()]);
         }
 
         $categories = Category::create($request->all());
-        return $this->success('Category Created Succesfully!',$categories);
+        return $this->success('Category Created Succesfully!', $categories);
     }
 
     /**
@@ -58,9 +58,9 @@ class CategoryController extends Controller
     {
         $categories = Category::find($id);
         if (!$categories) {
-            return $this->error('Category Not Found.', ['error'=>'Category Not Found']);
+            return $this->error('Category Not Found.', ['error' => 'Category Not Found']);
         }
-        return $this->success('Category Retrived Succesfully!',$categories);
+        return $this->success('Category Retrived Succesfully!', $categories);
     }
 
     /**
@@ -78,23 +78,25 @@ class CategoryController extends Controller
     {
         $categories = Category::find($id);
         if (!$categories) {
-            return $this->error('Category Not Found.', ['error'=>'Category Not Found']);
+            return $this->error('Category Not Found.', ['error' => 'Category Not Found']);
         }
         $validator = Validator::make($request->all(), [
-            'name' => 'required|unique:categories,name',
-            'slug' => 'required|unique:categories,name',
+            'name' =>
+            'required|unique:categories,name,' . $id,
+            'slug' =>
+            'required|unique:categories,slug' . $id,
         ], [
             'name.required' => 'The name field is required.',
             'name.unique' => 'The name must be unique.',
             'slug.required' => 'The slug field is required.',
             'slug.unique' => 'The slug must be unique.',
         ]);
-        if($validator->fails()){
-            return $this->error('Category Error.', ['errors'=>$validator->errors()]);
+        if ($validator->fails()) {
+            return $this->error('Category Error.', ['errors' => $validator->errors()]);
         }
 
         $categories->update($request->all());
-        return $this->success('Category Updated Succesfully!',$categories);
+        return $this->success('Category Updated Succesfully!', $categories);
     }
 
     /**
@@ -104,9 +106,9 @@ class CategoryController extends Controller
     {
         $categories = Category::find($id);
         if (!$categories) {
-            return $this->error('Category Not Found.', ['error'=>'Category Not Found']);
+            return $this->error('Category Not Found.', ['error' => 'Category Not Found']);
         }
         $categories->delete();
-        return $this->success('Category Deleted Succesfully!',$categories);
+        return $this->success('Category Deleted Succesfully!', $categories);
     }
 }

@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->integer('brand_id')->unsigned()->nullable();
-            $table->integer('category_id')->unsigned()->nullable();
+            $table->unsignedBigInteger('brand_id')->nullable(); // Use unsignedBigInteger
             $table->string('brand')->nullable();
+            $table->unsignedBigInteger('category_id')->nullable(); // Use unsignedBigInteger
+            $table->string('category')->nullable();
             $table->string('name');
             $table->string('model_number')->nullable();
             $table->string('mpn')->nullable();
@@ -30,9 +31,20 @@ return new class extends Migration
             $table->boolean('active')->default(1);
             $table->softDeletes();
             $table->timestamps();
+
+            // Foreign key constraint for 'brand_id'
+            $table->foreign('brand_id')
+                ->references('id')
+                ->on('brands')
+                ->onDelete('cascade');
+
+            // Foreign key constraint for 'category_id'
+            $table->foreign('category_id')
+                ->references('id')
+                ->on('categories')
+                ->onDelete('cascade');
         });
     }
-
     /**
      * Reverse the migrations.
      */
