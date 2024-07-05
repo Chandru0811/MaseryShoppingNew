@@ -10,15 +10,16 @@ use Carbon\Carbon;
 
 class Inventory extends Model
 {
-    use HasFactory,Imageable;
-    
+    use HasFactory, Imageable;
+
     protected $fillable = [
         'title',
-        'product_id', 
-        'brand_id', 
-        'sku', 
-        'condition', 
-        'condition_note', 
+        'product_id',
+        'brand_id',
+        'category_id',
+        'sku',
+        'condition',
+        'condition_note',
         'description',
         'key_features',
         'stock_quantity',
@@ -44,20 +45,20 @@ class Inventory extends Model
         // For example, return inventories that belong to the authenticated user
         return $this->where('user_id', auth()->id())->get();
     }
-    
+
     public function scopeAvailable($query)
     {
         return $query->where('active', 1);
     }
-    
+
     public function product()
     {
         return $this->belongsTo(Product::class)->withDefault();
     }
-    
+
     public function currnt_sale_price()
     {
-        if($this->hasOffer())
+        if ($this->hasOffer())
             return $this->offer_price;
 
         return $this->sale_price;
@@ -65,7 +66,7 @@ class Inventory extends Model
 
     public function hasOffer()
     {
-        if(
+        if (
             ($this->offer_price > 0) &&
             ($this->offer_price < $this->sale_price) &&
             ($this->offer_start < Carbon::now()) &&
@@ -75,18 +76,17 @@ class Inventory extends Model
 
         return FALSE;
     }
-    
+
     public function scopeSearch($query, $term)
     {
         return $query->where('title', 'LIKE', '%' . $term . '%')
-                     ->orWhere('description', 'LIKE', '%' . $term . '%')
-                     ->orWhere('slug','LIKE', '%' . $term . '%'); 
+            ->orWhere('description', 'LIKE', '%' . $term . '%')
+            ->orWhere('slug', 'LIKE', '%' . $term . '%');
     }
-    
-     public function carts()
+
+    public function carts()
     {
         return $this->belongsToMany(Cart::class, 'cart_items')
-        ->withPivot('item_description', 'quantity', 'unit_price')->withTimestamps();
+            ->withPivot('item_description', 'quantity', 'unit_price')->withTimestamps();
     }
-    
 }

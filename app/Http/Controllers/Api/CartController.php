@@ -98,7 +98,7 @@ class CartController extends Controller
 
 
         $cart->handling = $old_cart ? $old_cart->handling : 0.00;
-        $cart->total = $old_cart ? ($old_cart->total + ($qtt * $unit_price)) : $unit_price;
+        $cart->total = $old_cart ? ($old_cart->total + ($qtt * $unit_price)) : $qtt * $unit_price;
         $cart->packaging_id = $old_cart ? $old_cart->packaging_id : 0;
         $cart->grand_total = $cart->grand_total();
 
@@ -136,8 +136,9 @@ class CartController extends Controller
             ['inventory_id', $request->item],
         ])->delete();
 
-        if (!$result)
+        if (!$result) {
             return response()->json(['message' => 'Not Found'], 404);
+        }
 
         if (!$cart->inventories()->count()) {
             $cart->forceDelete();
@@ -147,6 +148,7 @@ class CartController extends Controller
 
         return $this->success('Item Removed From Cart Successfully!', $cart);
     }
+
 
     public function crosscheckAndUpdateOldCartInfo($request, Cart $cart)
     {
@@ -241,8 +243,8 @@ class CartController extends Controller
         }
 
         // Set customer_id if not set yet
-        if (!$cart->customer_id && Auth::guard('customer')->check())
-            $cart->customer_id = Auth::guard('customer')->user()->id;
+        if (!$cart->customer_id && Auth::guard('api')->check())
+            $cart->customer_id = Auth::guard('api')->user()->id;
         else if (Auth::guard('api')->check())
             $cart->customer_id = Auth::guard('api')->user()->id;
 

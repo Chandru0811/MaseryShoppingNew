@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\File;
 class InventoryController extends Controller
 {
     use ApiResponses;
-    
+
     private $model;
 
     private $inventory;
@@ -31,20 +31,19 @@ class InventoryController extends Controller
     {
         $inventories = $this->inventory->all();
 
-       return $this->success('Prooducts Retrived Successfulluy!', $inventories);
+        return $this->success('Prooducts Retrived Successfulluy!', $inventories);
     }
 
     public function add(Request $request, $id)
     {
         $inInventory = $this->inventory->checkInveoryExist($id);
 
-        if($inInventory)
-            return response()->json(['warning'=>'inventory already exist']);
-            
+        if ($inInventory)
+            return response()->json(['warning' => 'inventory already exist']);
+
         $product = $this->inventory->findProduct($id);
 
-         return $this->success('Create Inventory Using Product', $product);
-
+        return $this->success('Create Inventory Using Product', $product);
     }
 
     public function store(Request $request)
@@ -63,17 +62,16 @@ class InventoryController extends Controller
             'image.mimes' => 'The image must be a file of type: jpeg, png',
         ]);
         if ($validator->fails()) {
-            return $this->error('Validation Error.', ['errors'=>$validator->errors()]);
+            return $this->error('Validation Error.', ['errors' => $validator->errors()]);
         }
-        
+
         $inventory = $this->inventory->store($request);
-        
-        if ($request->hasFile('images'))
-        {
+
+        if ($request->hasFile('images')) {
             $images = $request->images;
-             if ($images != null) {
+            if ($images != null) {
                 $publicPath = "assets/inventories/images/" . $inventory->slug;
-    
+
                 if (!file_exists($publicPath)) {
                     File::makeDirectory($publicPath, $mode = 0777, true, true);
                 }
@@ -81,9 +79,9 @@ class InventoryController extends Controller
                 foreach ($images as $image) {
                     $imageName = $image->getClientOriginalName();
                     $imageSize = $image->getSize();  // Get the size before moving the file
-    
+
                     $image->move($publicPath, $imageName);
-    
+
                     $inventory->images()->create([
                         'path' => $publicPath . "/" . $imageName,
                         'name' => $imageName,
@@ -94,29 +92,28 @@ class InventoryController extends Controller
                         'imageable_type' => get_class($inventory),
                     ]);
                 }
-                }
+            }
         }
-       
-       return $this->success('Inventory Created Succesfully!',$inventory);
+
+        return $this->success('Inventory Created Succesfully!', $inventory);
     }
-    
+
     public function update(Request $request, $id)
     {
         $inventory = $this->inventory->update($request, $id);
-        return $this->success('Inventory Updated Succesfully!',$inventory);
-        
+        return $this->success('Inventory Updated Succesfully!', $inventory);
     }
-    
+
     public function destroy($id)
     {
-        $inventory=$this->inventory->find($id);
+        $inventory = $this->inventory->find($id);
         $inventory->delete();
         return $this->success('Inventory Deleted Successfully!', $inventory);
     }
-    
+
     public function show($id)
     {
-        $inventory=$this->inventory->find($id);
+        $inventory = $this->inventory->find($id);
         return $this->success('Inventory Deleted Successfully!', $inventory);
     }
 }

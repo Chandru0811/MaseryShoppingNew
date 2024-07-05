@@ -16,6 +16,7 @@ return new class extends Migration
             $table->text('title');
             $table->bigInteger('product_id')->unsigned();
             $table->bigInteger('brand_id')->unsigned();
+            $table->bigInteger('category_id')->unsigned();
             $table->string('sku', 200);
             $table->enum('condition', ['New', 'Used', 'Refurbished']);
             $table->text('condition_note')->nullable();
@@ -41,6 +42,11 @@ return new class extends Migration
             $table->boolean('active')->default(1);
             $table->softDeletes();
             $table->timestamps();
+
+            $table->foreign('category_id')
+                ->references('id')
+                ->on('categories')
+                ->onDelete('cascade');
 
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
         });
