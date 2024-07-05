@@ -81,10 +81,8 @@ class CategoryController extends Controller
             return $this->error('Category Not Found.', ['error' => 'Category Not Found']);
         }
         $validator = Validator::make($request->all(), [
-            'name' =>
-            'required|unique:categories,name,' . $id,
-            'slug' =>
-            'required|unique:categories,slug' . $id,
+            'name' => 'required|unique:categories,name,' . $id,
+            'slug' => 'required|unique:categories,slug,' . $id,
         ], [
             'name.required' => 'The name field is required.',
             'name.unique' => 'The name must be unique.',
