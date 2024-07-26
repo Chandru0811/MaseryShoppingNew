@@ -50,7 +50,7 @@ class InventoryController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'title' => 'required',
-            'sku' => 'required|unique:inventories,sku',
+            'sku' => 'required',
             'sale_price' => 'required|numeric|min:0',
             'offer_price' => 'nullable|numeric',
             'available_from' => 'nullable|date',
@@ -58,6 +58,7 @@ class InventoryController extends Controller
             'image' => 'mimes:jpeg,png',
         ], [
             'title.required' => 'The title field is required.',
+            'sku.required' => 'The sku field is required.',
             'order.required' => 'The order field is required.',
             'image.mimes' => 'The image must be a file of type: jpeg, png',
         ]);

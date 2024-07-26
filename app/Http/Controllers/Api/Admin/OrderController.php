@@ -28,7 +28,7 @@ class OrderController extends Controller
             }
         ]);
 
-        return $this->success('Order Retrived Successfully',$orders);
+        return $this->success('Order Retrived Successfully', $orders);
     }
 
     public function show($id)
