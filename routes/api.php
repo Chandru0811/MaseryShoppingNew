@@ -15,6 +15,8 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\CheckoutController;
 use App\Http\Controllers\Api\Admin\OrderController;
 use App\Http\Controllers\Api\Admin\AccountController;
+use App\Http\Controllers\Api\NotificationController;
+use App\Http\Controllers\Api\UserOrderController;
 use App\Http\Controllers\Api\WishlistController;
 
 Route::post('login', [AuthController::class, 'login']);
@@ -35,17 +37,17 @@ Route::get('search', [HomeController::class, 'search']);
 Route::get('cart/{cart}/checkout', [CheckoutController::class, 'getcheckoutdetails']);
 
 //wishlist
-Route::get('getwishlist',[WishlistController::class,'index']);
-Route::post('addToWishlist/{slug}', [WishlistController::class,'add']);
-Route::post('removefromWishlist/{id}', [WishlistController::class,'remove']);
- Route::get('totalwishlistitems',[WishlistController::class,'totalitems']);
+Route::get('getwishlist', [WishlistController::class, 'index']);
+Route::post('addToWishlist/{slug}', [WishlistController::class, 'add']);
+Route::post('removefromWishlist/{id}', [WishlistController::class, 'remove']);
+Route::get('totalwishlistitems', [WishlistController::class, 'totalitems']);
 
 Route::middleware('auth:api')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
     Route::get('Customers', [AccountController::class, 'index']);
-    Route::get('orders/customer/{customerId}', [OrderController::class, 'orderByCustomerId']);
+    Route::get('orders/customer/{customerId}', [UserOrderController::class, 'orderByCustomerId']);
 
 
     Route::post('logout', [AuthController::class, 'logout']);
@@ -71,6 +73,11 @@ Route::middleware('auth:api')->group(function () {
         Route::get('order/{order}', [OrderController::class, 'show']);
         Route::get('Customers', [AccountController::class, 'index']);
         Route::get('contactedUsers', [AccountController::class, 'contactedUsers']);
+        Route::get(
+            'notifications',
+            [NotificationController::class, 'getallnotifications']
+        );
+        Route::post('send/notification', [NotificationController::class, 'sendnotification']);
     });
 
     Route::middleware('role:2')->group(function () {
