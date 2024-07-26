@@ -13,14 +13,41 @@ class OrderController extends Controller
 
     public function index()
     {
-        $orders = Order::all();
+        $orders = Order::get();
+        $orders->load([
+            'inventories' => function ($query) {
+                $query->with([
+                    'product' => function ($q) {
+                        $q->with([
+                            'images' => function ($q) {
+                                $q->select('path', 'imageable_id', 'imageable_type');
+                            }
+                        ]);
+                    }
+                ]);
+            }
+        ]);
 
         return $this->success('Order Retrived Successfully',$orders);
     }
 
     public function show($id)
     {
-        $order = Order::with('inventories.image:path,imageable_id,imageable_type')->where('id',$id)->first();
+        $order = Order::where('id',$id)->first();
+        
+        $order->load([
+            'inventories' => function ($query) {
+                $query->with([
+                    'product' => function ($q) {
+                        $q->with([
+                            'images' => function ($q) {
+                                $q->select('path', 'imageable_id', 'imageable_type');
+                            }
+                        ]);
+                    }
+                ]);
+            }
+        ]);
         
         return $this->success('Order Retrived Successfully',$order);
     }
