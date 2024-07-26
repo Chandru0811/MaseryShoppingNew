@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\CheckoutController;
 use App\Http\Controllers\Api\Admin\OrderController;
 use App\Http\Controllers\Api\Admin\AccountController;
+use App\Http\Controllers\Api\WishlistController;
 
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
@@ -32,6 +33,12 @@ Route::put('cart/{cart}/update', [CartController::class,'update']);
 Route::get('totalitems',[CartController::class,'totalitemsincart']);
 Route::get('search',[HomeController::class,'search']);
 Route::get('cart/{cart}/checkout', [CheckoutController::class,'getcheckoutdetails']);
+
+//wishlist
+Route::get('getwishlist',[WishlistController::class,'index']);
+Route::post('addToWishlist/{slug}', [WishlistController::class,'add']);
+Route::post('removefromWishlist/{id}', [WishlistController::class,'remove']);
+ Route::get('totalwishlistitems',[WishlistController::class,'totalitems']);
 
 Route::middleware('auth:api')->group(function () {
     Route::get('/user', function (Request $request) {

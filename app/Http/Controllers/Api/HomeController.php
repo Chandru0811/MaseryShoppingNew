@@ -105,8 +105,8 @@ class HomeController extends Controller
         }
 
         if ($request->has('categories')) {
-            $brandlist = explode(',', $request->input('categories'));
-            $products = $products->whereIn('category_id', $brandlist);
+            $categorylist = explode(',', $request->input('categories'));
+            $products = $products->whereIn('category_id', $categorylist);
         }
 
         if ($request->has('brand')) {
