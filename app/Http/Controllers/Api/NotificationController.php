@@ -16,7 +16,7 @@ class NotificationController extends Controller
     public function sendnotification(Request $request)
     {
         //$notification = Notification::create($request->all());
-
+        // dd($request);
         $tempUsers = TempUsers::get();
         foreach ($tempUsers as $tempUser) {
             Notification::create([
@@ -49,9 +49,18 @@ class NotificationController extends Controller
 
     public function getallnotifications()
     {
-        $notifications = Notification::orderBy('created_at', 'desc')->distinct()->get();
+        $notifications = Notification::select('id', 'title', 'message', 'type', 'status', 'priority', 'is_read', 'read_at', 'created_at', 'updated_at')
+        ->orderBy('created_at', 'desc')
+        ->get()
+            ->unique(function ($item) {
+                return $item['title'] . $item['message'] . $item['type'] . $item['status'] . $item['priority'];
+            })
+            ->values();
+
         return $this->success('Notification Messages Retrieved Successfully!', $notifications);
     }
+
+
 
     public function updatenotification(Request $request, $ip_address)
     {
