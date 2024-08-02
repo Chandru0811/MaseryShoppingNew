@@ -14,7 +14,8 @@ class UserOrderController extends Controller
 
     public function orderByCustomerId($customerId)
     {
-        $orders = Order::where('customer_id', $customerId)->get();
+        $orders = Order::where('customer_id', $customerId)->orderBy('created_at', 'desc')
+            ->get();
 
         $orders->load([
             'inventories' => function ($query) {
