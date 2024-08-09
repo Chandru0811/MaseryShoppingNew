@@ -73,6 +73,7 @@ class HomeController extends Controller
                     ->withCount('inventories');
             },
             'product.image:path,imageable_id,imageable_type',
+            'wishlists', // Load the wishlists relationship
         ])->get();
 
         return $this->success('Product Retrived Successfully!', $item);
