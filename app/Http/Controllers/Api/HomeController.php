@@ -96,7 +96,8 @@ class HomeController extends Controller
         $term = $request->input('q');
         $products = Inventory::search($term)->where('active', 1)->get();
         $products->load([
-            'product.image:path,imageable_id,imageable_type'
+            'product.image:path,imageable_id,imageable_type',
+            'wishlists',
         ]);
 
         if ($request->has('min_price') && $request->has('max_price')) {
