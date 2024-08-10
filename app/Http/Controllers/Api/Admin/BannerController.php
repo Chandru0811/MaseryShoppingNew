@@ -20,7 +20,6 @@ class BannerController extends Controller
     {
         $banners = Banner::all();
         return $this->success('Banners Retrived Successfully!', $banners);
-
     }
 
     /**
@@ -39,7 +38,7 @@ class BannerController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'required|string',
             'order' => 'required|integer',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
         ], [
             'title.required' => 'The title field is required.',
             'order.required' => 'The order field is required.',
@@ -111,7 +110,7 @@ class BannerController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'required|string',
             'order' => 'required|integer',
-            'image' => 'sometimes|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image' => 'sometimes|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
         ], [
             'title.required' => 'The title field is required.',
             'order.required' => 'The order field is required.',

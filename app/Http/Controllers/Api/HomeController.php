@@ -24,7 +24,7 @@ class HomeController extends Controller
         $featuredProducts = Inventory::with([
             'image:path,imageable_id,imageable_type',
             'product:id,slug',
-            'product.image:path,imageable_id,imageable_type'
+            'product.image:path,imageable_id,imageable_type', 'wishlists'
         ])->limit(10)->get();
 
         $categoryBasedProducts = Category::withCount('products')
@@ -41,13 +41,13 @@ class HomeController extends Controller
         $allProducts = Inventory::with([
             'image:path,imageable_id,imageable_type',
             'product:id,slug',
-            'product.image:path,imageable_id,imageable_type'
+            'product.image:path,imageable_id,imageable_type', 'wishlists'
         ])->get();
 
         $recent = Inventory::with([
             'image:path,imageable_id,imageable_type',
             'product:id,slug',
-            'product.image:path,imageable_id,imageable_type'
+            'product.image:path,imageable_id,imageable_type', 'wishlists'
         ])
             ->available()->latest()->limit(10)->get();
 
@@ -73,6 +73,7 @@ class HomeController extends Controller
                     ->withCount('inventories');
             },
             'product.image:path,imageable_id,imageable_type',
+            'wishlists', // Load the wishlists relationship
         ])->get();
 
         return $this->success('Product Retrived Successfully!', $item);
@@ -80,13 +81,13 @@ class HomeController extends Controller
 
     public function getcategory()
     {
-        $category = Category::all();
+        $category = Category::withCount('products')->get();
         return $this->success('Categories Retrived Successfully', $category);
     }
 
     public function getbrands()
     {
-        $brands = Brand::all();
+        $brands = Brand::withCount('products')->get();
         return $this->success('Brands Retrived Successfully', $brands);
     }
 
@@ -95,7 +96,8 @@ class HomeController extends Controller
         $term = $request->input('q');
         $products = Inventory::search($term)->where('active', 1)->get();
         $products->load([
-            'product.image:path,imageable_id,imageable_type'
+            'product.image:path,imageable_id,imageable_type',
+            'wishlists',
         ]);
 
         if ($request->has('min_price') && $request->has('max_price')) {

@@ -89,4 +89,9 @@ class Inventory extends Model
         return $this->belongsToMany(Cart::class, 'cart_items')
             ->withPivot('item_description', 'quantity', 'unit_price')->withTimestamps();
     }
+
+    public function wishlists()
+    {
+        return $this->hasMany(Wishlist::class);
+    }
 }

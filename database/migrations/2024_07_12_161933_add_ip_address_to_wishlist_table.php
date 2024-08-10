@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('wishlist', function (Blueprint $table) {
+        Schema::table('wishlists', function (Blueprint $table) {
             $table->string('ip_address')->nullable()->after('customer_id');
         });
     }
