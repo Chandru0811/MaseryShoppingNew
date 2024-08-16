@@ -21,16 +21,17 @@ class ContactUs extends Model
         'content'
     ];
 
-    public function approve()
+    public function scopeApproved($query)
     {
-        $this->approved_phone = $this->phone;
-        $this->approved_email = $this->email;
-        $this->approved_address = $this->address;
-        $this->approved_timing = $this->timing;
-        $this->approved_maplink = $this->maplink;
-        $this->approved_heading = $this->heading;
-        $this->approved_content = $this->content;
-        $this->is_approved = true;
-        $this->save();
+        return $query->where('is_approved', true)
+                     ->select([
+                        'approved_phone as phone',
+                        'approved_email as email',
+                        'approved_address as address',
+                        'approved_timing as timing',
+                        'approved_maplink as maplink',
+                        'approved_heading as heading',
+                        'approved_content as content',
+                     ]);
     }
 }

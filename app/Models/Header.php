@@ -18,13 +18,14 @@ class Header extends Model
         'header_logo_size'
     ];
 
-    public function approve()
+    public function scopeApproved($query)
     {
-        $this->approved_header_logo_name = $this->header_logo_name;
-        $this->approved_header_logo_path = $this->header_logo_path;
-        $this->approved_header_logo_extension = $this->header_logo_extension;
-        $this->approved_header_logo_size = $this->header_logo_size;
-        $this->is_approved = true;
-        $this->save();
+        return $query->where('is_approved', true)
+                     ->select([
+                        'approved_header_logo_name as header_logo_name',
+                        'approved_header_logo_path as header_logo_path',
+                        'approved_header_logo_extension as header_logo_extension',
+                        'approved_header_logo_size as header_logo_size',
+                     ]);
     }
 }
