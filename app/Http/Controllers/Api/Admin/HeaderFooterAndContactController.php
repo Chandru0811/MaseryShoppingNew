@@ -135,7 +135,7 @@ class HeaderFooterAndContactController extends Controller
            return $this->error('Footer values not found', 404);
        }
 
-       $footer->approved_footer_logo_path = $footer->logo_path;
+       $footer->approved_footer_logo_path = $footer->footer_logo_path;
        $footer->approved_about_text = $footer->about_text;
        $footer->approved_whatsapp_link = $footer->whatsapp_link;
        $footer->approved_facebook_link = $footer->facebook_link;
