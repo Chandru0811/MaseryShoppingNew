@@ -14,7 +14,7 @@ return new class extends Migration
             $table->string('email');
             $table->string('address');
             $table->string('timing');
-            $table->string('maplink');
+            $table->text('maplink');
             $table->string('heading');
             $table->text('content');
 
@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('approved_email')->nullable();
             $table->string('approved_address')->nullable();
             $table->string('approved_timing')->nullable();
-            $table->string('approved_maplink')->nullable();
+            $table->text('approved_maplink')->nullable();
             $table->string('approved_heading')->nullable();
             $table->text('approved_content')->nullable();
             $table->boolean('is_approved')->default(false);
