@@ -10,6 +10,9 @@ use App\Models\Inventory;
 use App\Models\About;
 use App\Models\Category;
 use App\Models\Brand;
+use App\Models\Header;
+use App\Models\Footer;
+use App\Models\ContactUs;
 use Illuminate\Support\Facades\Artisan;
 use Carbon\Carbon;
 
@@ -120,4 +123,25 @@ class HomeController extends Controller
 
         return $this->success('Products Retrived Successfully', $productsArray);
     }
+
+     //Header
+     public function header()
+     {
+         $header = Header::approved()->first();
+         return $this->success('Header Details Successfully!', $header);
+     }
+ 
+     //Footer
+     public function footer()
+     {
+         $footer = Footer::approved()->first();
+         return $this->success('Footer Details Successfully!', $footer);
+     }
+
+     //Contact
+     public function contactus()
+     {
+         $contact = ContactUs::approved()->first();
+         return $this->success('Contact Details Successfully!', $contact);
+     }
 }

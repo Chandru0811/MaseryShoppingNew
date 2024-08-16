@@ -18,10 +18,15 @@ use App\Http\Controllers\Api\Admin\AccountController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\UserOrderController;
 use App\Http\Controllers\Api\WishlistController;
+use App\Http\Controllers\Api\Admin\HeaderFooterAndContactController;
+
 
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
 //HomePage
+Route::get('header', [HomeController::class,'header']);
+Route::get('footer', [HomeController::class,'footer']);
+Route::get('contact', [HomeController::class,'contactus']);
 Route::get('homescreen', [HomeController::class, 'index']);
 Route::get('categories', [HomeController::class, 'getcategory']);
 Route::get('brands', [HomeController::class, 'getbrands']);
@@ -41,8 +46,8 @@ Route::get('getwishlist', [WishlistController::class, 'index']);
 Route::post('addToWishlist/{slug}', [WishlistController::class, 'add']);
 Route::post('removefromWishlist/{id}', [WishlistController::class, 'remove']);
 Route::get('totalwishlistitems', [WishlistController::class, 'totalitems']);
-
-Route::middleware('auth:api')->group(function () {
+ 
+ Route::middleware('auth:api')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
@@ -56,8 +61,6 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/admin', function () {
             return response()->json(['message' => 'Welcome Admin']);
         });
-
-
         Route::apiResource('banner', BannerController::class);
         Route::apiResource('brand', BrandController::class);
         Route::apiResource('category', CategoryController::class);
@@ -78,6 +81,21 @@ Route::middleware('auth:api')->group(function () {
             [NotificationController::class, 'getallnotifications']
         );
         Route::post('send/notification', [NotificationController::class, 'sendnotification']);
+         // Header
+ Route::get('/edit/header', [HeaderFooterAndContactController::class, 'edit_header']);
+ Route::post('publish/header', [HeaderFooterAndContactController::class, 'publish_header']);
+ Route::post('update/header', [HeaderFooterAndContactController::class, 'update_header']);
+
+ // Footer
+ Route::get('edit/footer', [HeaderFooterAndContactController::class, 'edit_footer']);
+ Route::post('update/footer', [HeaderFooterAndContactController::class, 'update_footer']);
+ Route::post('publish/footer', [HeaderFooterAndContactController::class, 'publish_footer']);
+
+ // Contact
+ Route::get('edit/contact', [HeaderFooterAndContactController::class, 'edit_contactus']);
+ Route::post('update/contact', [HeaderFooterAndContactController::class, 'update_contactus']);
+ Route::post('publish/contact', [HeaderFooterAndContactController::class, 'publish_contactus']);
+
     });
 
     Route::middleware('role:2')->group(function () {
@@ -86,5 +104,7 @@ Route::middleware('auth:api')->group(function () {
         });
 
         Route::post('cart/{cart}/checkout', [CheckoutController::class, 'checkout']);
+
+
     });
 });
