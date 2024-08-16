@@ -31,7 +31,7 @@ class Wishlist extends Model
         return $this->belongsTo(Inventory::class);
     }
 
-    public function customer()
+    public function user()
     {
         return $this->belongsTo(User::class);
     }
@@ -39,13 +39,9 @@ class Wishlist extends Model
     public function scopeMine($query)
     {
         $customer_id = \Auth::guard('api')->check() ? \Auth::guard('api')->user()->id : null;
-
-        if ($customer_id) {
-            return $query->where('customer_id', $customer_id);
-        } else {
-            $ip_address = request()->ip(); 
-            return $query->where('ip_address', $ip_address);
-        }
+        $ip_address = request()->ip(); 
+        
+        return $query->where('customer_id', $customer_id)->orwhere('ip_address',$ip_address);
         
     }
 }
