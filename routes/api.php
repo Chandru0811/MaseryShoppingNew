@@ -19,18 +19,19 @@ use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\UserOrderController;
 use App\Http\Controllers\Api\WishlistController;
 use App\Http\Controllers\Api\Admin\HeaderFooterAndContactController;
-
+use App\Http\Controllers\Api\Admin\PaymentOptionController;
 
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
 //HomePage
-Route::get('header', [HomeController::class,'header']);
-Route::get('footer', [HomeController::class,'footer']);
-Route::get('contact', [HomeController::class,'contactus']);
+Route::get('header', [HomeController::class, 'header']);
+Route::get('footer', [HomeController::class, 'footer']);
+Route::get('contact', [HomeController::class, 'contactus']);
 Route::get('homescreen', [HomeController::class, 'index']);
 Route::get('categories', [HomeController::class, 'getcategory']);
 Route::get('brands', [HomeController::class, 'getbrands']);
 Route::post('contact', [UserController::class, 'contact']);
+Route::get('payment', [HomeController::class, 'getPaymentData']);
 Route::get('get/product/{slug}', [HomeController::class, 'product']);
 // CART
 Route::post('addToCart/{slug}', [CartController::class, 'addToCart']);
@@ -46,8 +47,8 @@ Route::get('getwishlist', [WishlistController::class, 'index']);
 Route::post('addToWishlist/{slug}', [WishlistController::class, 'add']);
 Route::post('removefromWishlist/{id}', [WishlistController::class, 'remove']);
 Route::get('totalwishlistitems', [WishlistController::class, 'totalitems']);
- 
- Route::middleware('auth:api')->group(function () {
+
+Route::middleware('auth:api')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
@@ -81,20 +82,28 @@ Route::get('totalwishlistitems', [WishlistController::class, 'totalitems']);
             [NotificationController::class, 'getallnotifications']
         );
         Route::post('send/notification', [NotificationController::class, 'sendnotification']);
-         // Header
- Route::get('/edit/header', [HeaderFooterAndContactController::class, 'edit_header']);
- Route::post('publish/header', [HeaderFooterAndContactController::class, 'publish_header']);
- Route::post('update/header', [HeaderFooterAndContactController::class, 'update_header']);
+        // Header
+        Route::get('/edit/header', [HeaderFooterAndContactController::class, 'edit_header']);
+        Route::post('publish/header', [HeaderFooterAndContactController::class, 'publish_header']);
+        Route::post('update/header', [HeaderFooterAndContactController::class, 'update_header']);
 
- // Footer
- Route::get('edit/footer', [HeaderFooterAndContactController::class, 'edit_footer']);
- Route::post('update/footer', [HeaderFooterAndContactController::class, 'update_footer']);
- Route::post('publish/footer', [HeaderFooterAndContactController::class, 'publish_footer']);
+        // Footer
+        Route::get('edit/footer', [HeaderFooterAndContactController::class, 'edit_footer']);
+        Route::post('update/footer', [HeaderFooterAndContactController::class, 'update_footer']);
+        Route::post('publish/footer', [HeaderFooterAndContactController::class, 'publish_footer']);
 
- // Contact
- Route::get('edit/contact', [HeaderFooterAndContactController::class, 'edit_contactus']);
- Route::post('update/contact', [HeaderFooterAndContactController::class, 'update_contactus']);
- Route::post('publish/contact', [HeaderFooterAndContactController::class, 'publish_contactus']);
+        // Contact
+        Route::get('edit/contact', [HeaderFooterAndContactController::class, 'edit_contactus']);
+        Route::post('update/contact', [HeaderFooterAndContactController::class, 'update_contactus']);
+        Route::post('publish/contact', [HeaderFooterAndContactController::class, 'publish_contactus']);
+
+        //  Payment Options
+        Route::get('edit/payment/options', [PaymentOptionController::class, 'getAllPaymentOptions']);
+        Route::post('update/payment/status', [PaymentOptionController::class, 'updatePaymentStatus']);
+        Route::post('update/direct-bank-transfer', [PaymentOptionController::class, 'updateDirectBankTransfer']);
+        Route::post('update/qr-code', [PaymentOptionController::class, 'updateQRCode']);
+        Route::post('update/uen-number', [PaymentOptionController::class, 'updateUENNumber']);
+        Route::post('update/mobile-number', [PaymentOptionController::class, 'updateMobileNumber']);
 
     });
 
@@ -104,7 +113,5 @@ Route::get('totalwishlistitems', [WishlistController::class, 'totalitems']);
         });
 
         Route::post('cart/{cart}/checkout', [CheckoutController::class, 'checkout']);
-
-
     });
 });

@@ -13,6 +13,7 @@ use App\Models\Brand;
 use App\Models\Header;
 use App\Models\Footer;
 use App\Models\ContactUs;
+use App\Models\PaymentOption;
 use Illuminate\Support\Facades\Artisan;
 use Carbon\Carbon;
 
@@ -130,7 +131,7 @@ class HomeController extends Controller
          $header = Header::approved()->first();
          return $this->success('Header Details Successfully!', $header);
      }
- 
+
      //Footer
      public function footer()
      {
@@ -144,4 +145,11 @@ class HomeController extends Controller
          $contact = ContactUs::approved()->first();
          return $this->success('Contact Details Successfully!', $contact);
      }
+
+    public function getPaymentData()
+    {
+        $paymentOptions = PaymentOption::with(['paymentSubTypes'])->get();
+
+        return $this->success('Payment option retrieved successfully.', $paymentOptions);
+    }
 }
