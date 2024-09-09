@@ -20,6 +20,7 @@ use App\Http\Controllers\Api\UserOrderController;
 use App\Http\Controllers\Api\WishlistController;
 use App\Http\Controllers\Api\Admin\HeaderFooterAndContactController;
 use App\Http\Controllers\Api\Admin\PaymentOptionController;
+use App\Http\Controllers\Api\Admin\SubcategoryController;
 
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
@@ -65,6 +66,7 @@ Route::middleware('auth:api')->group(function () {
         Route::apiResource('banner', BannerController::class);
         Route::apiResource('brand', BrandController::class);
         Route::apiResource('category', CategoryController::class);
+        Route::apiResource('subcategory', SubcategoryController::class);
         Route::apiResource('about', AboutController::class);
         Route::apiResource('product', ProductController::class);
         Route::get('inventory/add/{inventory}', [InventoryController::class, 'add']);
