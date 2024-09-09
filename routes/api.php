@@ -26,7 +26,7 @@ Route::post('register', [AuthController::class, 'register']);
 //HomePage
 Route::get('header', [HomeController::class, 'header']);
 Route::get('footer', [HomeController::class, 'footer']);
-Route::get('contact', [HomeController::class, 'contactus']);
+Route::get('contactus', [HomeController::class, 'contactus']);
 Route::get('homescreen', [HomeController::class, 'index']);
 Route::get('categories', [HomeController::class, 'getcategory']);
 Route::get('brands', [HomeController::class, 'getbrands']);
@@ -83,7 +83,7 @@ Route::middleware('auth:api')->group(function () {
         );
         Route::post('send/notification', [NotificationController::class, 'sendnotification']);
         // Header
-        Route::get('/edit/header', [HeaderFooterAndContactController::class, 'edit_header']);
+        Route::get('edit/header', [HeaderFooterAndContactController::class, 'edit_header']);
         Route::post('publish/header', [HeaderFooterAndContactController::class, 'publish_header']);
         Route::post('update/header', [HeaderFooterAndContactController::class, 'update_header']);
 

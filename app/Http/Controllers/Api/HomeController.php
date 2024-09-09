@@ -148,7 +148,11 @@ class HomeController extends Controller
 
     public function getPaymentData()
     {
-        $paymentOptions = PaymentOption::with(['paymentSubTypes'])->get();
+        $paymentOptions = PaymentOption::with(['paymentSubTypes' => function ($query) {
+            $query->where('is_active', true);
+        }])
+            ->where('is_active', true)
+            ->get();
 
         return $this->success('Payment option retrieved successfully.', $paymentOptions);
     }

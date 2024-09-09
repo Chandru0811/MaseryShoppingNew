@@ -13,7 +13,8 @@ class OrderController extends Controller
 
     public function index()
     {
-        $orders = Order::get();
+        $orders = Order::orderBy('created_at', 'desc')
+            ->get();
         $orders->load([
             'inventories' => function ($query) {
                 $query->with([
@@ -34,7 +35,7 @@ class OrderController extends Controller
     public function show($id)
     {
         $order = Order::where('id',$id)->first();
-        
+
         $order->load([
             'inventories' => function ($query) {
                 $query->with([
@@ -48,7 +49,7 @@ class OrderController extends Controller
                 ]);
             }
         ]);
-        
+
         return $this->success('Order Retrived Successfully',$order);
     }
 }

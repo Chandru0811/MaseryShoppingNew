@@ -16,6 +16,10 @@ class PaymentSubType extends Model
         'is_active',
     ];
 
+    protected $casts = [
+        'is_active' => 'boolean',
+    ];
+
     public function paymentOption()
     {
         return $this->belongsTo(PaymentOption::class);
