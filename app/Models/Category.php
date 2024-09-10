@@ -9,15 +9,28 @@ class Category extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'slug', 'description'];
-
+    // protected $fillable = ['name', 'slug','description'];
+    protected $fillable = ['name', 'parent_id'];
+    
     public function products()
     {
         return $this->hasMany(Product::class);
     }
 
-    public function subcategories()
+    // Self-referential parent category relationship
+    public function parent()
     {
-        return $this->hasMany(Subcategory::class);
+        return $this->belongsTo(Category::class, 'parent_id');
+    }
+
+    // Self-referential children category relationship
+    public function children()
+    {
+        return $this->hasMany(Category::class, 'parent_id');
+    }
+
+    public function allChildren()
+    {
+        return $this->children()->with('allChildren');
     }
 }

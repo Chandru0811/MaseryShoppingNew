@@ -85,8 +85,8 @@ class HomeController extends Controller
 
     public function getcategory()
     {
-        $category = Category::withCount('products')->get();
-        return $this->success('Categories Retrived Successfully', $category);
+        $categories = Category::with('allChildren')->withCount('products')->get();
+        return $this->success('Categories Retrived Successfully', $categories);
     }
 
     public function getbrands()
