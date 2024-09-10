@@ -85,7 +85,7 @@ class HomeController extends Controller
 
     public function getcategory()
     {
-        $categories = Category::with('allChildren')->withCount('products')->get();
+        $categories = Category::with('allChildren')->where('parent_id',null)->withCount('products')->get();
         return $this->success('Categories Retrived Successfully', $categories);
     }
 
