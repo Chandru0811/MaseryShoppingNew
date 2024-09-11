@@ -24,6 +24,7 @@ use App\Http\Controllers\Api\Admin\SubcategoryController;
 
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
+Route::apiResource('category', CategoryController::class);
 //HomePage
 Route::get('header', [HomeController::class, 'header']);
 Route::get('footer', [HomeController::class, 'footer']);
@@ -65,7 +66,7 @@ Route::middleware('auth:api')->group(function () {
         });
         Route::apiResource('banner', BannerController::class);
         Route::apiResource('brand', BrandController::class);
-        Route::apiResource('category', CategoryController::class);
+
         Route::apiResource('subcategory', SubcategoryController::class);
         Route::apiResource('about', AboutController::class);
         Route::apiResource('product', ProductController::class);
@@ -106,7 +107,6 @@ Route::middleware('auth:api')->group(function () {
         Route::post('update/qr-code', [PaymentOptionController::class, 'updateQRCode']);
         Route::post('update/uen-number', [PaymentOptionController::class, 'updateUENNumber']);
         Route::post('update/mobile-number', [PaymentOptionController::class, 'updateMobileNumber']);
-
     });
 
     Route::middleware('role:2')->group(function () {

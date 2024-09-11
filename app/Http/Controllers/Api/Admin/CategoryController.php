@@ -11,102 +11,143 @@ use App\Traits\ApiResponses;
 class CategoryController extends Controller
 {
     use ApiResponses;
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index()
     {
-        $category = Category::all();
-        return $this->success('Categories Retrived Succesfully!', $category);
+        $categories = Category::with('allChildren')->where('parent_id', null)->withCount('products')->get();
+        return $this->success('Categories Retrived Successfully', $categories);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|unique:categories,name',
-            'slug' => 'required|unique:categories,name',
-        ], [
-            'name.required' => 'The name field is required.',
-            'name.unique' => 'The name must be unique.',
-            'slug.required' => 'The slug field is required.',
-            'slug.unique' => 'The slug must be unique.',
+            'name' => 'required|string|max:255',
+            'slug' => 'required|string|unique:categories,slug',
+            'children' => 'nullable|array',
+            'children.*.name' => 'required_with:children|string|max:255',
+            'children.*.slug' => 'required_with:children|string|unique:categories,slug',
+            'children.*.children' => 'nullable|array', // Validate nested children
+            'children.*.children.*.name' => 'required_with:children.*.children|string|max:255',
+            'children.*.children.*.slug' => 'required_with:children.*.children|string|unique:categories,slug',
+            'children.*.children.*.children' => 'nullable|array', // Nested children inside children
+            'children.*.children.*.children.*.name' => 'required_with:children.*.children.*.children|string|max:255',
+            'children.*.children.*.children.*.slug' => 'required_with:children.*.children.*.children|string|unique:categories,slug',
+            'children.*.children.*.children.*.children' => 'nullable|array', // Nested children inside children
+            'children.*.children.*.children.*.children.*.name' => 'required_with:children.*.children.*.children|string|max:255',
+            'children.*.children.*.children.*.children.*.slug' => 'required_with:children.*.children.*.children|string|unique:categories,slug',
         ]);
 
+        // Check if validation fails
         if ($validator->fails()) {
-            return $this->error('Validation Error.', ['errors' => $validator->errors()]);
+            return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $categories = Category::create($request->all());
-        return $this->success('Category Created Succesfully!', $categories);
+        // Get the validated data
+        $validatedData = $validator->validated();
+
+        // Save the category and its children
+        $this->saveCategoryWithChildren($validatedData, null);
+
+        return response()->json(['message' => 'Categories stored successfully']);
     }
 
-    /**
-     * Display the specified resource.
-     */
+    private function saveCategoryWithChildren(array $categoryData, $parentId = null)
+    {
+
+        // Ensure both 'name' and 'slug' are present before creating the category
+        $category = Category::create([
+            'name' => $categoryData['name'],
+            'slug' => $categoryData['slug'],  // Ensure 'slug' is passed here
+            'parent_id' => $parentId,
+        ]);
+
+        // dd($category);
+
+        // If the category has children, save them recursively
+        if (isset($categoryData['children']) && is_array($categoryData['children'])) {
+            foreach ($categoryData['children'] as $childCategoryData) {
+                $this->saveCategoryWithChildren($childCategoryData, $category->id);
+            }
+        }
+    }
+
+
+
+
     public function show(string $id)
     {
-        $categories = Category::find($id);
-        if (!$categories) {
+        $category = Category::with('allChildren')->find($id);
+        if (!$category) {
             return $this->error('Category Not Found.', ['error' => 'Category Not Found']);
         }
-        return $this->success('Category Retrived Succesfully!', $categories);
+        return $this->success('Category Retrieved Successfully!', $category);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
 
-    /**
-     * Update the specified resource in storage.
-     */
+
+
     public function update(Request $request, string $id)
     {
-        $categories = Category::find($id);
-        if (!$categories) {
+        $category = Category::find($id);
+        if (!$category) {
             return $this->error('Category Not Found.', ['error' => 'Category Not Found']);
         }
+
         $validator = Validator::make($request->all(), [
-            'name' => 'required|unique:categories,name,' . $id,
-            'slug' => 'required|unique:categories,slug,' . $id,
-        ], [
-            'name.required' => 'The name field is required.',
-            'name.unique' => 'The name must be unique.',
-            'slug.required' => 'The slug field is required.',
-            'slug.unique' => 'The slug must be unique.',
+            'name' => 'required|string|max:255|unique:categories,name,' . $id,
+            'slug' => 'required|string|max:255|unique:categories,slug,' . $id,
+            'children' => 'nullable|array',
+            'children.*.name' => 'required_with:children|string|max:255',
+            'children.*.slug' => 'required_with:children|string|unique:categories,slug',
+            'children.*.children' => 'nullable|array',
+            'children.*.children.*.name' => 'required_with:children.*.children|string|max:255',
+            'children.*.children.*.slug' => 'required_with:children.*.children|string|unique:categories,slug',
+            'children.*.children.*.children' => 'nullable|array',
+            'children.*.children.*.children.*.name' => 'required_with:children.*.children.*.children|string|max:255',
+            'children.*.children.*.children.*.slug' => 'required_with:children.*.children.*.children|string|unique:categories,slug',
+            'children.*.children.*.children.*.children' => 'nullable|array',
+            'children.*.children.*.children.*.children.*.name' => 'required_with:children.*.children.*.children.*.children|string|max:255',
+            'children.*.children.*.children.*.children.*.slug' => 'required_with:children.*.children.*.children.*.children|string|unique:categories,slug',
         ]);
+
         if ($validator->fails()) {
-            return $this->error('Category Error.', ['errors' => $validator->errors()]);
+            return $this->error('Category Update Error.', ['errors' => $validator->errors()]);
         }
 
-        $categories->update($request->all());
-        return $this->success('Category Updated Succesfully!', $categories);
+        $category->update($request->only(['name', 'slug']));
+
+        if ($request->has('children')) {
+            $this->updateCategoryWithChildren($request->input('children'), $category->id);
+        }
+
+        return $this->success('Category Updated Successfully!', $category);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    private function updateCategoryWithChildren(array $categoryData, $parentId = null)
+    {
+        foreach ($categoryData as $data) {
+            $category = Category::updateOrCreate(
+                ['slug' => $data['slug'], 'parent_id' => $parentId],
+                ['name' => $data['name'], 'parent_id' => $parentId]
+            );
+
+            if (isset($data['children']) && is_array($data['children'])) {
+                $this->updateCategoryWithChildren($data['children'], $category->id);
+            }
+        }
+    }
+
+
+
     public function destroy(string $id)
     {
-        $categories = Category::find($id);
-        if (!$categories) {
+        $category = Category::find($id);
+        if (!$category) {
             return $this->error('Category Not Found.', ['error' => 'Category Not Found']);
         }
-        $categories->delete();
-        return $this->success('Category Deleted Succesfully!', $categories);
+
+        $category->delete();
+
+        return $this->success('Category Deleted Successfully!', $category);
     }
 }
