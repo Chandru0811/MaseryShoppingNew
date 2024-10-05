@@ -29,10 +29,10 @@ class CategoryController extends Controller
             'children.*.children' => 'nullable|array', // Validate nested children
             'children.*.children.*.name' => 'required_with:children.*.children|string|max:255',
             'children.*.children.*.slug' => 'required_with:children.*.children|string|unique:categories,slug',
-            'children.*.children.*.children' => 'nullable|array', // Nested children inside children
+            'children.*.children.*.children' => 'nullable|array',
             'children.*.children.*.children.*.name' => 'required_with:children.*.children.*.children|string|max:255',
             'children.*.children.*.children.*.slug' => 'required_with:children.*.children.*.children|string|unique:categories,slug',
-            'children.*.children.*.children.*.children' => 'nullable|array', // Nested children inside children
+            'children.*.children.*.children.*.children' => 'nullable|array',
             'children.*.children.*.children.*.children.*.name' => 'required_with:children.*.children.*.children|string|max:255',
             'children.*.children.*.children.*.children.*.slug' => 'required_with:children.*.children.*.children|string|unique:categories,slug',
         ]);
@@ -86,57 +86,28 @@ class CategoryController extends Controller
 
 
 
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-        $category = Category::find($id);
-        if (!$category) {
-            return $this->error('Category Not Found.', ['error' => 'Category Not Found']);
-        }
 
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255|unique:categories,name,' . $id,
+        $validator = Validator::make($request->json()->all(), [
+            'name' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:categories,slug,' . $id,
-            'children' => 'nullable|array',
-            'children.*.name' => 'required_with:children|string|max:255',
-            'children.*.slug' => 'required_with:children|string|unique:categories,slug',
-            'children.*.children' => 'nullable|array',
-            'children.*.children.*.name' => 'required_with:children.*.children|string|max:255',
-            'children.*.children.*.slug' => 'required_with:children.*.children|string|unique:categories,slug',
-            'children.*.children.*.children' => 'nullable|array',
-            'children.*.children.*.children.*.name' => 'required_with:children.*.children.*.children|string|max:255',
-            'children.*.children.*.children.*.slug' => 'required_with:children.*.children.*.children|string|unique:categories,slug',
-            'children.*.children.*.children.*.children' => 'nullable|array',
-            'children.*.children.*.children.*.children.*.name' => 'required_with:children.*.children.*.children.*.children|string|max:255',
-            'children.*.children.*.children.*.children.*.slug' => 'required_with:children.*.children.*.children.*.children|string|unique:categories,slug',
+            'parent_id' => 'nullable|integer|exists:categories,id',
         ]);
 
         if ($validator->fails()) {
-            return $this->error('Category Update Error.', ['errors' => $validator->errors()]);
+            return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $category->update($request->only(['name', 'slug']));
-
-        if ($request->has('children')) {
-            $this->updateCategoryWithChildren($request->input('children'), $category->id);
+        $category = Category::find($id);
+        if (!$category) {
+            return response()->json(['error' => 'Category not found'], 404);
         }
 
-        return $this->success('Category Updated Successfully!', $category);
+        $category->update($validator->validated());
+
+        return $this->success('Category Updated Successfully', $category);
     }
-
-    private function updateCategoryWithChildren(array $categoryData, $parentId = null)
-    {
-        foreach ($categoryData as $data) {
-            $category = Category::updateOrCreate(
-                ['slug' => $data['slug'], 'parent_id' => $parentId],
-                ['name' => $data['name'], 'parent_id' => $parentId]
-            );
-
-            if (isset($data['children']) && is_array($data['children'])) {
-                $this->updateCategoryWithChildren($data['children'], $category->id);
-            }
-        }
-    }
-
 
 
     public function destroy(string $id)
