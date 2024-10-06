@@ -24,6 +24,7 @@ class CategoryController extends Controller
             'category_sub_group_two_id' => 'required|exists:category_sub_groups_two,id',
             'name' => 'required|string|max:200|unique:categories,name',
             'slug' => 'required|string|max:200|unique:categories,slug',
+            'featured' => 'nullable|boolean'
         ], [
             'category_sub_group_two_id.required' => 'The category sub group two id field is required.',
             'category_sub_group_two_id.exists' => 'The selected category sub group two id is invalid.',
@@ -65,6 +66,7 @@ class CategoryController extends Controller
             'name' => 'required|string|max:200|unique:categories,name,' . $id,
             'slug' => 'required|string|max:200|unique:categories,slug,' . $id,
             'description' => 'nullable|string',
+            'featured' => 'nullable|boolean'
         ], [
             'category_sub_group_two_id.required' => 'The category sub group two id field is required.',
             'category_sub_group_two_id.exists' => 'The selected category sub group two id is invalid.',
