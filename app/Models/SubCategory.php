@@ -10,12 +10,11 @@ class SubCategory extends Model
     use HasFactory;
 
     protected $table = "sub_categories";
+
     protected $primaryKey  = "id";
+    
     protected $fillable = ['name', 'slug', 'description', 'category_id'];
 
-    /**
-     * Get the category that owns the subcategory.
-     */
     public function category()
     {
         return $this->belongsTo(Category::class);
