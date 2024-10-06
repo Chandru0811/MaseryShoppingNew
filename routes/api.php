@@ -15,6 +15,10 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\CheckoutController;
 use App\Http\Controllers\Api\Admin\OrderController;
 use App\Http\Controllers\Api\Admin\AccountController;
+use App\Http\Controllers\Api\Admin\CategoryGroupController;
+use App\Http\Controllers\Api\Admin\CategorySubGroupController;
+use App\Http\Controllers\Api\Admin\CategorySubGroupOneController;
+use App\Http\Controllers\Api\Admin\CategorySubGroupTwoController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\UserOrderController;
 use App\Http\Controllers\Api\WishlistController;
@@ -107,6 +111,46 @@ Route::middleware('auth:api')->group(function () {
         Route::post('update/qr-code', [PaymentOptionController::class, 'updateQRCode']);
         Route::post('update/uen-number', [PaymentOptionController::class, 'updateUENNumber']);
         Route::post('update/mobile-number', [PaymentOptionController::class, 'updateMobileNumber']);
+
+        // Category Groups
+        Route::get('categoryGroup', [CategoryGroupController::class, 'index']);
+        Route::post('create/categoryGroup', [CategoryGroupController::class, 'store']);
+        Route::get('categoryGroup/{id}', [CategoryGroupController::class, 'show']);
+        Route::put('update/categoryGroup/{id}', [CategoryGroupController::class, 'update']);
+        Route::delete('delete/categoryGroup/{id}', [CategoryGroupController::class, 'destroy']);
+        Route::get('restore/categoryGroup/{id}', [CategoryGroupController::class, 'restore']);
+
+        // Category Sub Groups
+        Route::get('categorySubGroup', [CategorySubGroupController::class, 'index']);
+        Route::post('create/categorySubGroup', [CategorySubGroupController::class, 'store']);
+        Route::get('categorySubGroup/{id}', [CategorySubGroupController::class, 'show']);
+        Route::put('update/categorySubGroup/{id}', [CategorySubGroupController::class, 'update']);
+        Route::delete('delete/categorySubGroup/{id}', [CategorySubGroupController::class, 'destroy']);
+        Route::post('restore/categorySubGroup/{id}', [CategorySubGroupController::class, 'restore']);
+
+        // Category Sub Groups One
+        Route::get('categorySubGroupOne', [CategorySubGroupOneController::class, 'index']);
+        Route::post('create/categorySubGroupOne', [CategorySubGroupOneController::class, 'store']);
+        Route::get('categorySubGroupOne/{id}', [CategorySubGroupOneController::class, 'show']);
+        Route::put('update/categorySubGroupOne/{id}', [CategorySubGroupOneController::class, 'update']);
+        Route::delete('delete/categorySubGroupOne/{id}', [CategorySubGroupOneController::class, 'destroy']);
+        Route::post('restore/categorySubGroupOne/{id}', [CategorySubGroupOneController::class, 'restore']);
+
+        // Category Sub Groups Two
+        Route::get('categorySubGroupTwo', [CategorySubGroupTwoController::class, 'index']);
+        Route::post('create/categorySubGroupTwo', [CategorySubGroupTwoController::class, 'store']);
+        Route::get('categorySubGroupTwo/{id}', [CategorySubGroupTwoController::class, 'show']);
+        Route::put('update/categorySubGroupTwo/{id}', [CategorySubGroupTwoController::class, 'update']);
+        Route::delete('delete/categorySubGroupTwo/{id}', [CategorySubGroupTwoController::class, 'destroy']);
+        Route::post('restore/categorySubGroupTwo/{id}', [CategorySubGroupTwoController::class, 'restore']);
+
+        // Categories
+        Route::get('category', [CategoryController::class, 'index']);
+        Route::post('create/category', [CategoryController::class, 'store']);
+        Route::get('category/{id}', [CategoryController::class, 'show']);
+        Route::put('update/category/{id}', [CategoryController::class, 'update']);
+        Route::delete('delete/category/{id}', [CategoryController::class, 'destroy']);
+        Route::post('restore/category/{id}', [CategoryController::class, 'restore']);
     });
 
     Route::middleware('role:2')->group(function () {

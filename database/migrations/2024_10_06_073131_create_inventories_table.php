@@ -16,7 +16,7 @@ return new class extends Migration
             $table->text('title');
             $table->bigInteger('product_id')->unsigned();
             $table->bigInteger('brand_id')->unsigned();
-            $table->bigInteger('category_id')->unsigned();
+            $table->integer('category_id')->unsigned();
             $table->string('sku', 200);
             $table->enum('condition', ['New', 'Used', 'Refurbished']);
             $table->text('condition_note')->nullable();

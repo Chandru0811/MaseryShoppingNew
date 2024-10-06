@@ -14,111 +14,101 @@ class CategoryController extends Controller
 
     public function index()
     {
-        $categories = Category::with('allChildren')->where('parent_id', null)->withCount('products')->get();
-        return $this->success('Categories Retrived Successfully', $categories);
+        $categories = Category::all();
+        return $this->success('Categories Retrived Succesfully!', $categories);
     }
 
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'slug' => 'required|string|unique:categories,slug',
-            'children' => 'nullable|array',
-            'children.*.name' => 'required_with:children|string|max:255',
-            'children.*.slug' => 'required_with:children|string|unique:categories,slug',
-            'children.*.children' => 'nullable|array', // Validate nested children
-            'children.*.children.*.name' => 'required_with:children.*.children|string|max:255',
-            'children.*.children.*.slug' => 'required_with:children.*.children|string|unique:categories,slug',
-            'children.*.children.*.children' => 'nullable|array',
-            'children.*.children.*.children.*.name' => 'required_with:children.*.children.*.children|string|max:255',
-            'children.*.children.*.children.*.slug' => 'required_with:children.*.children.*.children|string|unique:categories,slug',
-            'children.*.children.*.children.*.children' => 'nullable|array',
-            'children.*.children.*.children.*.children.*.name' => 'required_with:children.*.children.*.children|string|max:255',
-            'children.*.children.*.children.*.children.*.slug' => 'required_with:children.*.children.*.children|string|unique:categories,slug',
+            'category_sub_group_two_id' => 'required|exists:category_sub_groups_two,id',
+            'name' => 'required|string|max:200|unique:categories,name',
+            'slug' => 'required|string|max:200|unique:categories,slug',
+        ], [
+            'category_sub_group_two_id.required' => 'The category sub group two id field is required.',
+            'category_sub_group_two_id.exists' => 'The selected category sub group two id is invalid.',
+            'name.required' => 'The name field is required.',
+            'name.unique' => 'The name field must be unique.',
+            'slug.required' => 'The slug field is required.',
+            'slug.unique' => 'The slug field must be unique.',
         ]);
 
-        // Check if validation fails
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            return response()->json(['error' => $validator->errors()], 422);
         }
 
-        // Get the validated data
-        $validatedData = $validator->validated();
+        $category = Category::create($request->all());
 
-        // Save the category and its children
-        $this->saveCategoryWithChildren($validatedData, null);
-
-        return response()->json(['message' => 'Categories stored successfully']);
+        return $this->success('Category Created Successfully!', $category);
     }
-
-    private function saveCategoryWithChildren(array $categoryData, $parentId = null)
-    {
-
-        // Ensure both 'name' and 'slug' are present before creating the category
-        $category = Category::create([
-            'name' => $categoryData['name'],
-            'slug' => $categoryData['slug'],  // Ensure 'slug' is passed here
-            'parent_id' => $parentId,
-        ]);
-
-        // dd($category);
-
-        // If the category has children, save them recursively
-        if (isset($categoryData['children']) && is_array($categoryData['children'])) {
-            foreach ($categoryData['children'] as $childCategoryData) {
-                $this->saveCategoryWithChildren($childCategoryData, $category->id);
-            }
-        }
-    }
-
-
-
 
     public function show(string $id)
     {
-        $category = Category::with('allChildren')->find($id);
+        $category = Category::find($id);
+
         if (!$category) {
             return $this->error('Category Not Found.', ['error' => 'Category Not Found']);
         }
-        return $this->success('Category Retrieved Successfully!', $category);
+        return $this->success('Category Retrived Succesfully!', $category);
     }
 
-
-
-
-    public function update(Request $request, $id)
+    public function update(Request $request, string $id)
     {
+        $category = Category::find($id);
 
-        $validator = Validator::make($request->json()->all(), [
-            'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:categories,slug,' . $id,
-            'parent_id' => 'nullable|integer|exists:categories,id',
+        if (!$category) {
+            return $this->error('Category Not Found.', ['error' => 'Category Not Found']);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'category_sub_group_two_id' => 'required|exists:category_sub_groups_two,id',
+            'name' => 'required|string|max:200|unique:categories,name,' . $id,
+            'slug' => 'required|string|max:200|unique:categories,slug,' . $id,
+            'description' => 'nullable|string',
+        ], [
+            'category_sub_group_two_id.required' => 'The category sub group two id field is required.',
+            'category_sub_group_two_id.exists' => 'The selected category sub group two id is invalid.',
+            'name.required' => 'The name field is required.',
+            'name.unique' => 'The name must be unique.',
+            'slug.required' => 'The slug field is required.',
+            'slug.unique' => 'The slug must be unique.',
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            return response()->json(['error' => $validator->errors()], 422);
         }
 
-        $category = Category::find($id);
-        if (!$category) {
-            return response()->json(['error' => 'Category not found'], 404);
-        }
+        $validatedData = $validator->validated();
 
-        $category->update($validator->validated());
+        $category->update($validatedData);
 
-        return $this->success('Category Updated Successfully', $category);
+        return $this->success('Category Updated Successfully!', $category);
     }
 
-
-    public function destroy(string $id)
+    public function destroy($id)
     {
         $category = Category::find($id);
+
         if (!$category) {
             return $this->error('Category Not Found.', ['error' => 'Category Not Found']);
         }
 
         $category->delete();
 
-        return $this->success('Category Deleted Successfully!', $category);
+        return $this->ok('Category Deleted Successfully!');
     }
+
+    public function restore($id)
+    {
+        $category = Category::onlyTrashed()->find($id);
+
+        if (!$category) {
+            return $this->error('Category Not Found.', ['error' => 'Category Not Found']);
+        }
+        
+        $category->restore();
+
+        return $this->success('Category Restored Successfully!', $category);
+    }
+
 }

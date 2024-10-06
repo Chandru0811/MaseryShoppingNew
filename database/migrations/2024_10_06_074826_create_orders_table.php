@@ -64,6 +64,7 @@ return new class extends Migration
             $table->integer('quantity')->unsigned();
             $table->decimal('unit_price', 20, 6);
             $table->bigInteger('feedback_id')->unsigned()->nullable();
+            $table->string('email')->nullable();
             $table->timestamps();
 
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');

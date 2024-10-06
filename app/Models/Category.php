@@ -4,33 +4,37 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Category extends Model
 {
-    use HasFactory;
+    use HasFactory,SoftDeletes;
 
-    // protected $fillable = ['name', 'slug','description'];
-    protected $fillable = ['name', 'slug', 'parent_id'];
+    protected $table = 'categories';
 
-    public function products()
+    protected $fillable = [
+        'category_sub_group_two_id',
+        'name', 
+        'slug', 
+        'description',
+        'active',
+        'featured'
+    ];
+
+    protected $dates = ['deleted_at'];
+
+    public function categorySubGroupTwo()
+    {
+        return $this->belongsTo(CategorySubGroupTwo::class);
+    }
+
+    public function product()
     {
         return $this->hasMany(Product::class);
     }
 
-    // Self-referential parent category relationship
-    public function parent()
+    public function inventory()
     {
-        return $this->belongsTo(Category::class, 'parent_id');
-    }
-
-    // Self-referential children category relationship
-    public function children()
-    {
-        return $this->hasMany(Category::class, 'parent_id');
-    }
-
-    public function allChildren()
-    {
-        return $this->children()->with('allChildren');
+        return $this->hasMany(Inventory::class);
     }
 }

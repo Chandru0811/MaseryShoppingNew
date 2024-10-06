@@ -16,6 +16,7 @@ return new class extends Migration
             $table->bigInteger('inventory_id')->unsigned()->nullable();
             $table->bigInteger('product_id')->unsigned()->nullable();
             $table->bigInteger('customer_id')->unsigned();
+            $table->string('ip_address')->nullable();
             $table->timestamps();
 
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
