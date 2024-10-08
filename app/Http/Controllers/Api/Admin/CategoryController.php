@@ -45,8 +45,8 @@ class CategoryController extends Controller
 
     public function show(string $id)
     {
-        $category = Category::find($id);
-
+        $category = Category::with('categorySubGroupTwo')->where('id',$id)->first();
+        
         if (!$category) {
             return $this->error('Category Not Found.', ['error' => 'Category Not Found']);
         }

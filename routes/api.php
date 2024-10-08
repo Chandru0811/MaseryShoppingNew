@@ -28,7 +28,7 @@ use App\Http\Controllers\Api\Admin\SubcategoryController;
 
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
-Route::apiResource('category', CategoryController::class);
+// Route::apiResource('category', CategoryController::class);
 //HomePage
 Route::get('header', [HomeController::class, 'header']);
 Route::get('footer', [HomeController::class, 'footer']);

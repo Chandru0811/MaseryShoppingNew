@@ -14,6 +14,7 @@ use App\Models\Header;
 use App\Models\Footer;
 use App\Models\ContactUs;
 use App\Models\PaymentOption;
+use App\Models\CategoryGroup;
 use Illuminate\Support\Facades\Artisan;
 use Carbon\Carbon;
 
@@ -85,7 +86,8 @@ class HomeController extends Controller
 
     public function getcategory()
     {
-        $categories = Category::with('allChildren')->where('parent_id', null)->withCount('products')->get();
+        //$categories = Category::with('allChildren')->where('parent_id', null)->withCount('products')->get();
+        $categories = CategoryGroup::with('categorySubGroup.categorySubGroupOne.categorySubGroupTwo.category')->get();
         return $this->success('Categories Retrived Successfully', $categories);
     }
 

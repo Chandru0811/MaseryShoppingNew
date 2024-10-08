@@ -44,7 +44,7 @@ class CategorySubGroupOneController extends Controller
 
     public function show(string $id)
     {
-        $categorySubGroupOne = CategorySubGroupOne::find($id);
+        $categorySubGroupOne = CategorySubGroupOne::with('categorySubGroup')->where('id',$id)->first();
 
         if (!$categorySubGroupOne) {
             return $this->error('Category Sub Group One Not Found.', ['error' => 'Category Sub Group One Not Found']);
