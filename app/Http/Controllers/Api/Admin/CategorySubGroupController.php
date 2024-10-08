@@ -44,7 +44,7 @@ class CategorySubGroupController extends Controller
 
     public function show(string $id)
     {
-        $categorySubGroup = CategorySubGroup::find($id);
+        $categorySubGroup = CategorySubGroup::with('categorySubGroupOne')->find($id);
 
         if (!$categorySubGroup) {
             return $this->error('Category Sub Group Not Found.', ['error' => 'Category Sub Group Not Found']);
@@ -105,7 +105,7 @@ class CategorySubGroupController extends Controller
         if (!$categorySubGroup) {
             return $this->error('Category Sub Group Not Found.', ['error' => 'Category Sub Group Not Found']);
         }
-        
+
         $categorySubGroup->restore();
 
         return $this->success('Category Sub Group Restored Successfully!', $categorySubGroup);
