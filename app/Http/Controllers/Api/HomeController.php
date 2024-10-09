@@ -19,6 +19,8 @@ use Illuminate\Support\Facades\Artisan;
 use Carbon\Carbon;
 use App\Models\Product;
 use App\Models\CategorySubGroup;
+use App\Models\CategorySubGroupOne;
+use App\Models\CategorySubGroupTwo;
 
 class HomeController extends Controller
 {
@@ -126,24 +128,44 @@ class HomeController extends Controller
             $query->whereHas('categorySubGroupTwo', function ($q2) use ($categoryGroup) {
                 $q2->whereHas('categorySubGroupOne', function ($q3) use ($categoryGroup) {
                     $q3->whereHas('categorySubGroup', function ($q4) use ($categoryGroup) {
-                        $q4->where('category_group_id', $categoryGroup->id); // Filter by CategoryGroup ID
+                        $q4->where('category_group_id', $categoryGroup->id); 
                     });
                 });
             });
-        })->get();
+            })->get();
         }
         else if ($request->has('insubgrp')) { 
-            $category = CategorySubGroup::where('slug', $request->input('insubgrp'))->firstOrFail();
-            $listings = $category->available()->get();
-            $products = $products->intersect($listings);
+            $categorySubGroup = CategorySubGroup::where('slug', $request->input('insubgrp'))->firstOrFail();
+            $products = Product::whereHas('category', function ($query) use ($categorySubGroup) {
+                $query->whereHas('categorySubGroupTwo', function ($q2) use ($categorySubGroup) {
+                    $q2->whereHas('categorySubGroupOne', function ($q3) use ($categorySubGroup) {
+                        $q3->where('category_sub_group_id', $categorySubGroup->id); 
+                    });
+                });
+            })->get();
+         }else if($request->has('insubgrp1')){
+            $categorySubGroupOne = CategorySubGroupOne::where('slug', $request->input('insubgrp1'))->firstOrFail();
+
+            $products = Product::whereHas('category', function ($query) use ($categorySubGroupOne) {
+                $query->whereHas('categorySubGroupTwo', function ($q2) use ($categorySubGroupOne) {
+                    $q2->where('category_sub_group_one_id', $categorySubGroupOne->id);
+                });
+            })->get();
+         }
+         else if($request->has('insubgrp2')){
+            $categorySubGroupTwo = CategorySubGroupTwo::where('slug', $request->input('insubgrp2'))->firstOrFail();
+
+            $products = Product::whereHas('category', function ($query) use ($categorySubGroupTwo) {
+                $query->where('category_sub_group_two_id', $categorySubGroupTwo->id);
+            })->get();
+         }
+         else if($request->has('in')){
+            $category = Category::where('slug', $request->input('in'))->firstOrFail();
+
+            $products = Product::where('category_id', $category->id)->get();
          }
 
-         if ($request->has('category_group_id')) {
-            $categoryGroupIds = explode(',', $request->input('category_group_id'));
-            $productsQuery->whereHas('product.category.categorySubGroupTwo.categorySubGroupOne.categorySubGroup.categoryGroup', function ($q) use ($categoryGroupIds) {
-                $q->whereIn('id', $categoryGroupIds);
-            });
-        }
+         
 
         $productsArray = $products->values()->all();
 
