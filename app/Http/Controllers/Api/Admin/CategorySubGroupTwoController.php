@@ -44,7 +44,7 @@ class CategorySubGroupTwoController extends Controller
 
     public function show(string $id)
     {
-        $categorySubGroupTwo = CategorySubGroupTwo::with('categorySubGroupOne')->where('id',$id)->first();
+        $categorySubGroupTwo = CategorySubGroupTwo::with('category')->find($id);
 
         if (!$categorySubGroupTwo) {
             return $this->error('Category Sub Group Two Not Found.', ['error' => 'Category Sub Group Two Not Found']);
@@ -105,7 +105,7 @@ class CategorySubGroupTwoController extends Controller
         if (!$categorySubGroupTwo) {
             return $this->error('Category Sub Group Two Not Found.', ['error' => 'Category Sub Group Two Not Found']);
         }
-        
+
         $categorySubGroupTwo->restore();
 
         return $this->success('Category Sub Group Two Restored Successfully!', $categorySubGroupTwo);

@@ -43,7 +43,7 @@ class CategoryGroupController extends Controller
 
     public function show(string $id)
     {
-        $categoryGroup = CategoryGroup::find($id);
+        $categoryGroup = CategoryGroup::with('categorySubGroup')->find($id);
 
         if (!$categoryGroup) {
             return $this->error('Category Group Not Found.', ['error' => 'Category Group Not Found']);

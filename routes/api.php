@@ -118,7 +118,7 @@ Route::middleware('auth:api')->group(function () {
         Route::get('categoryGroup/{id}', [CategoryGroupController::class, 'show']);
         Route::put('update/categoryGroup/{id}', [CategoryGroupController::class, 'update']);
         Route::delete('delete/categoryGroup/{id}', [CategoryGroupController::class, 'destroy']);
-        Route::get('restore/categoryGroup/{id}', [CategoryGroupController::class, 'restore']);
+        Route::post('restore/categoryGroup/{id}', [CategoryGroupController::class, 'restore']);
 
         // Category Sub Groups
         Route::get('categorySubGroup', [CategorySubGroupController::class, 'index']);
