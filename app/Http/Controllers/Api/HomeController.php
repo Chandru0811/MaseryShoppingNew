@@ -116,7 +116,6 @@ class HomeController extends Controller
             $products = $products->where('sale_price', '>=', $minPrice)->where('sale_price', '<=', $maxPrice);
         }
        
-
         if ($request->has('brand')) {
             $brandlist = explode(',', $request->input('brand'));
             $products = $products->whereIn('brand_id', $brandlist);
@@ -164,8 +163,6 @@ class HomeController extends Controller
 
             $products = Product::where('category_id', $category->id)->get();
          }
-
-         
 
         $productsArray = $products->values()->all();
 
