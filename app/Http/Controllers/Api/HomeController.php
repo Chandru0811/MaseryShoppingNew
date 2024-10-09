@@ -17,6 +17,8 @@ use App\Models\PaymentOption;
 use App\Models\CategoryGroup;
 use Illuminate\Support\Facades\Artisan;
 use Carbon\Carbon;
+use App\Models\Product;
+use App\Models\CategorySubGroup;
 
 class HomeController extends Controller
 {
@@ -111,16 +113,23 @@ class HomeController extends Controller
             $maxPrice = $request->input('max_price');
             $products = $products->where('sale_price', '>=', $minPrice)->where('sale_price', '<=', $maxPrice);
         }
-
-        if ($request->has('categories')) {
-            $categorylist = explode(',', $request->input('categories'));
-            $products = $products->whereIn('category_id', $categorylist);
-        }
+       
 
         if ($request->has('brand')) {
             $brandlist = explode(',', $request->input('brand'));
             $products = $products->whereIn('brand_id', $brandlist);
         }
+
+        if ($request->has('ingrp')) {
+           $category = CategoryGroup::where('slug', $request->input('ingrp'))->firstOrFail();
+           $listings = $category->available()->get();
+           $products = $products->intersect($listings);
+        }
+        else if ($request->has('insubgrp')) {
+            $category = CategorySubGroup::where('slug', $request->input('insubgrp'))->firstOrFail();
+            $listings = $category->available()->get();
+            $products = $products->intersect($listings);
+         }
 
         $productsArray = $products->values()->all();
 

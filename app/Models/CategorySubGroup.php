@@ -31,4 +31,9 @@ class CategorySubGroup extends Model
     {
         return $this->hasMany(CategorySubGroupOne::class);
     }
+    
+    public function scopeAvailable($query)
+    {
+        return $query->where('active', '1'); 
+    }
 }
