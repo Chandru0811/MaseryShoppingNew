@@ -119,17 +119,31 @@ class HomeController extends Controller
             $brandlist = explode(',', $request->input('brand'));
             $products = $products->whereIn('brand_id', $brandlist);
         }
-
+        
         if ($request->has('ingrp')) {
-           $category = CategoryGroup::where('slug', $request->input('ingrp'))->firstOrFail();
-           $listings = $category->available()->get();
-           $products = $products->intersect($listings);
+           $categoryGroup = CategoryGroup::where('slug', $request->input('ingrp'))->firstOrFail();
+           $products = Product::whereHas('category', function ($query) use ($categoryGroup) {
+            $query->whereHas('categorySubGroupTwo', function ($q2) use ($categoryGroup) {
+                $q2->whereHas('categorySubGroupOne', function ($q3) use ($categoryGroup) {
+                    $q3->whereHas('categorySubGroup', function ($q4) use ($categoryGroup) {
+                        $q4->where('category_group_id', $categoryGroup->id); // Filter by CategoryGroup ID
+                    });
+                });
+            });
+        })->get();
         }
-        else if ($request->has('insubgrp')) {
+        else if ($request->has('insubgrp')) { 
             $category = CategorySubGroup::where('slug', $request->input('insubgrp'))->firstOrFail();
             $listings = $category->available()->get();
             $products = $products->intersect($listings);
          }
+
+         if ($request->has('category_group_id')) {
+            $categoryGroupIds = explode(',', $request->input('category_group_id'));
+            $productsQuery->whereHas('product.category.categorySubGroupTwo.categorySubGroupOne.categorySubGroup.categoryGroup', function ($q) use ($categoryGroupIds) {
+                $q->whereIn('id', $categoryGroupIds);
+            });
+        }
 
         $productsArray = $products->values()->all();
 

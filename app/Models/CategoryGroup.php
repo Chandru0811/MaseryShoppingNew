@@ -28,8 +28,7 @@ class CategoryGroup extends Model
         return $this->hasMany(CategorySubGroup::class);
     }
 
-    public function scopeAvailable($query)
-    {
-        return $query->where('active', '1'); 
-    }
+    
+
+    
 }
