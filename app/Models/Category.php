@@ -14,8 +14,8 @@ class Category extends Model
 
     protected $fillable = [
         'category_sub_group_two_id',
-        'name', 
-        'slug', 
+        'name',
+        'slug',
         'description',
         'active',
         'featured'
@@ -28,7 +28,7 @@ class Category extends Model
         return $this->belongsTo(CategorySubGroupTwo::class);
     }
 
-    public function product()
+    public function products()
     {
         return $this->hasMany(Product::class);
     }
