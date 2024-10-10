@@ -132,7 +132,7 @@ class HomeController extends Controller
                     });
                 });
             });
-            })->get();
+            })->whereHas('inventories')->get();
         }
         else if ($request->has('insubgrp')) { 
             $categorySubGroup = CategorySubGroup::where('slug', $request->input('insubgrp'))->firstOrFail();
@@ -142,7 +142,7 @@ class HomeController extends Controller
                         $q3->where('category_sub_group_id', $categorySubGroup->id); 
                     });
                 });
-            })->get();
+            })->whereHas('inventories')->get();
          }else if($request->has('insubgrp1')){
             $categorySubGroupOne = CategorySubGroupOne::where('slug', $request->input('insubgrp1'))->firstOrFail();
 
@@ -150,19 +150,19 @@ class HomeController extends Controller
                 $query->whereHas('categorySubGroupTwo', function ($q2) use ($categorySubGroupOne) {
                     $q2->where('category_sub_group_one_id', $categorySubGroupOne->id);
                 });
-            })->get();
+            })->whereHas('inventories')->get();
          }
          else if($request->has('insubgrp2')){
             $categorySubGroupTwo = CategorySubGroupTwo::where('slug', $request->input('insubgrp2'))->firstOrFail();
 
             $products = Product::whereHas('category', function ($query) use ($categorySubGroupTwo) {
                 $query->where('category_sub_group_two_id', $categorySubGroupTwo->id);
-            })->get();
+            })->whereHas('inventories')->get();
          }
          else if($request->has('in')){
             $category = Category::where('slug', $request->input('in'))->firstOrFail();
 
-            $products = Product::where('category_id', $category->id)->get();
+            $products = Product::where('category_id', $category->id)->whereHas('inventories')->get();
          }
 
          
